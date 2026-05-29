@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --cream: #FAF7F2;
+    --dark-coffee: #1A1410;
+    --warm-brown: #3D2E22;
+    --terracotta: #C17A47;
+    --terracotta-hover: #A8683A;
+    --muted-gold: #B8956A;
+    --light-text: #F5EDE0;
+    --light-border: rgba(26, 20, 16, 0.08);
+    --warm-overlay: rgba(26, 20, 16, 0.03);
+    --error: #C44536;
+    --success: #5A7D4A;
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.625rem;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    color: var(--warm-brown);
+    background-color: var(--cream);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    color: var(--dark-coffee);
+  }
+
+  * {
+    @apply border-border;
+  }
+}
+
+@layer components {
+  .font-display {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -1.5px;
+  }
+
+  .font-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.4;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .font-nav {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .font-body {
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    letter-spacing: 0.2px;
+  }
+
+  .font-caption {
+    font-family: 'Jost', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 1.4;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .text-terracotta {
+    color: var(--terracotta);
+  }
+
+  .bg-terracotta {
+    background-color: var(--terracotta);
+  }
+
+  .bg-cream {
+    background-color: var(--cream);
+  }
+
+  .bg-dark-coffee {
+    background-color: var(--dark-coffee);
+  }
+
+  .border-terracotta {
+    border-color: var(--terracotta);
+  }
+
+  .hover-terracotta:hover {
+    color: var(--terracotta);
+  }
+
+  .section-padding {
+    padding-top: 160px;
+    padding-bottom: 160px;
+  }
+
+  .content-max-width {
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 5vw;
+    padding-right: 5vw;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .section-padding {
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+}
