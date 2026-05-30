@@ -38,7 +38,7 @@ export default function Header() {
         <div className="flex items-center justify-between px-5 lg:px-10 h-16">
           <Link to="/" className="flex items-center gap-3">
             <img
-              src="/logo.jpeg"
+              src="/logo.png"
               alt="La Taza Nomada"
               className="h-10 w-auto"
             />
