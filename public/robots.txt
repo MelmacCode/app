@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://latazanomada.com/sitemap.xml
+
+# Crawl-delay opcional para servidores pequeños
+Crawl-delay: 10

@@ -23,23 +23,21 @@ function ScrollToTop() {
 
 export default function App() {
   return (
-    <div className="min-h-[100dvh]" style={{ backgroundColor: 'var(--cream)', cursor: 'none' }}>
+    <>
       <ScrollToTop />
-      <CustomCursor />
       <Header />
+      <CustomCursor />
       <CartDrawer />
-      <main>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/tienda" element={<TiendaPage />} />
-          <Route path="/blog" element={<BlogPage />} />
-          <Route path="/ruta-cafe-cacao" element={<RutaPage />} />
-          <Route path="/redes" element={<RedesPage />} />
-          <Route path="/contacto" element={<ContactoPage />} />
-        </Routes>
-      </main>
-      <Footer />
       <BackToHome />
-    </div>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/tienda" element={<TiendaPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/ruta-cafe-cacao" element={<RutaPage />} />
+        <Route path="/redes" element={<RedesPage />} />
+        <Route path="/contacto" element={<ContactoPage />} />
+      </Routes>
+      <Footer />
+    </>
   );
 }

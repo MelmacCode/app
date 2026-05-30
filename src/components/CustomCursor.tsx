@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import { CoffeeCupLogo } from './Header';
 
 export default function CustomCursor() {
   const cursorRef = useRef<HTMLDivElement>(null);
@@ -67,10 +66,41 @@ export default function CustomCursor() {
   return (
     <div
       ref={cursorRef}
-      className="fixed top-0 left-0 pointer-events-none z-[9999] hidden lg:block"
+      className="fixed top-0 left-0 z-[9999] pointer-events-none hidden lg:block"
       style={{ willChange: 'transform' }}
     >
-      <CoffeeCupLogo className="w-7 h-7" color="#C17A47" />
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-7 h-7">
+        <path
+          d="M8 18C8 18 8 30 14 32H26C32 30 32 18 32 18H8Z"
+          stroke="#63341F"
+          strokeWidth="2"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M6 14H34V18H6V14Z"
+          stroke="#63341F"
+          strokeWidth="2"
+          fill="none"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M32 16C32 16 38 16 38 22C38 28 32 28 32 28"
+          stroke="#63341F"
+          strokeWidth="2"
+          fill="none"
+          strokeLinecap="round"
+        />
+        <path
+          d="M14 10C14 10 14 4 18 4C18 4 18 8 22 8C22 8 22 4 26 4C26 4 26 10 26 10"
+          stroke="#63341F"
+          strokeWidth="1.5"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
     </div>
   );
 }

@@ -19,8 +19,8 @@ module.exports = {
           foreground: "hsl(var(--secondary-foreground))",
         },
         destructive: {
-          DEFAULT: "hsl(var(--destructive) / <alpha-value>)",
-          foreground: "hsl(var(--destructive-foreground) / <alpha-value>)",
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
         },
         muted: {
           DEFAULT: "hsl(var(--muted))",
@@ -48,6 +48,22 @@ module.exports = {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        /* ============================================
+           COLORES PERSONALIZADOS LA TAZA NÓMADA
+           ============================================ */
+        taza: {
+          brown: '#63341F',
+          'brown-dark': '#4A2716',
+          'brown-light': '#7A4A32',
+          cream: '#F0EAD6',
+          'cream-light': '#F5F0E3',
+          dark: '#38201E',
+          'dark-light': '#4A2E2C',
+          turquoise: '#54B9A8',
+          'turquoise-dark': '#3D9A8A',
+          gold: '#D5B073',
+          'gold-light': '#E4C994',
+        },
       },
       borderRadius: {
         xl: "calc(var(--radius) + 4px)",
@@ -58,6 +74,10 @@ module.exports = {
       },
       boxShadow: {
         xs: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        taza: "0 4px 20px rgba(99, 52, 31, 0.15)",
+        'taza-lg': "0 8px 40px rgba(99, 52, 31, 0.2)",
+        'taza-xl': "0 12px 60px rgba(99, 52, 31, 0.25)",
+        gold: "0 4px 20px rgba(213, 176, 115, 0.3)",
       },
       keyframes: {
         "accordion-down": {
@@ -72,11 +92,25 @@ module.exports = {
           "0%,70%,100%": { opacity: "1" },
           "20%,50%": { opacity: "0" },
         },
+        "float": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" },
+        },
+        "pulse-soft": {
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.7" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "caret-blink": "caret-blink 1.25s ease-out infinite",
+        "float": "float 3s ease-in-out infinite",
+        "pulse-soft": "pulse-soft 2s ease-in-out infinite",
+      },
+      fontFamily: {
+        display: ['Cormorant Garamond', 'serif'],
+        body: ['Jost', 'sans-serif'],
       },
     },
   },

@@ -1,53 +1,44 @@
-import { useEffect, useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { SEO } from '@/hooks/useSEO';
+import { generateOrganizationSchema, generateLocalBusinessSchema } from '@/lib/seo';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const experiences = [
-  { title: 'Toma del cafe', location: 'Andes venezolanos', image: '/images/grid-toma-cafe.jpg' },
-  { title: 'Cultivo de cacao', location: 'Barlovento', image: '/images/hero-background-2.jpg' },
-  { title: 'Proceso natural', location: 'Finca Las Mercedes', image: '/images/about-background.jpg' },
-  { title: 'Recorrido por el cafetal', location: 'Merida', image: '/images/product-ruta-experiencia.jpg' },
-  { title: 'Cosecha de cacao', location: 'Paria', image: '/images/journey-background.jpg' },
-  { title: 'Tostion artesanal', location: 'Caracas', image: '/images/hero-background-1.jpg' },
-  { title: 'Empaque de cafe', location: 'Trujillo', image: '/images/product-cafe-trujillo.jpg' },
-  { title: 'Preparacion de chocolate', location: 'Carupano', image: '/images/product-chocolate-paria.jpg' },
-  { title: 'Degustacion guiada', location: 'Barquisimeto', image: '/images/service-itinerarios.jpg' },
+  { location: 'Merida, Venezuela', title: 'Tour del Cafe Andino', image: '/images/exp1.jpg' },
+  { location: 'Barlovento, Venezuela', title: 'Ruta del Cacao Criollo', image: '/images/exp2.jpg' },
+  { location: 'Caracas, Venezuela', title: 'Experiencia Sensorial Urbana', image: '/images/exp3.jpg' },
+  { location: 'Tovar, Venezuela', title: 'Cosecha y Tueste Artesanal', image: '/images/exp4.jpg' },
 ];
 
 const services = [
-  { num: '01', name: 'Itinerarios de Cafe y Cacao', desc: 'Creamos experiencias inolvidables que incluyen talleres, degustaciones y encuentros con los agricultores.', image: '/images/service-itinerarios.jpg' },
-  { num: '02', name: 'Apoyo a Productores Locales', desc: 'Facilitamos la conexion entre caficultores y consumidores, asegurando comercio justo.', image: '/images/hero-background-1.jpg' },
-  { num: '03', name: 'Tienda Online', desc: 'Descubre nuestra seleccion de merchandising y productos exclusivos.', image: '/images/product-cafe-caracas.jpg' },
-  { num: '04', name: 'Turismo Responsable', desc: 'Promovemos un turismo que resalta la cultura y biodiversidad de Venezuela.', image: '/images/about-background.jpg' },
-  { num: '05', name: 'Degustaciones de Cafe', desc: 'Vive la experiencia de degustar y aprender sobre diferentes variedades de cafe venezolano.', image: '/images/grid-toma-cafe.jpg' },
-  { num: '06', name: 'Experiencias Personalizadas', desc: 'Ofrecemos recorridos adaptados a tus gustos y preferencias.', image: '/images/product-ruta-experiencia.jpg' },
+  { num: '01', name: 'Tours Guiados', desc: 'Recorridos personalizados por fincas cafetaleras y cacaoteras con guias expertos.', image: '/images/svc1.jpg' },
+  { num: '02', name: 'Talleres', desc: 'Aprende desde la siembra hasta la taza. Degustaciones, tostado y preparacion.', image: '/images/svc2.jpg' },
+  { num: '03', name: 'Tienda Online', desc: 'Productos seleccionados directamente de nuestros productores aliados.', image: '/images/svc3.jpg' },
 ];
 
 const testimonials = [
-  { quote: 'Viajar con La Taza Nomada fue magico. El cafe y el cacao son una explosion de sabores que no te puedes perder.', author: 'Maria, viajera apasionada' },
-  { quote: 'Cada tour es una nueva aventura. Aprendi tanto sobre el cafe y conoci a productores que son verdaderos artistas.', author: 'Juan, amante del cafe' },
-  { quote: 'Fui por el cafe, pero volvi con recuerdos inolvidables y nuevos amigos. Es mas que un viaje, es una conexion cultural.', author: 'Ana, blogger de viajes' },
+  { quote: 'Una experiencia que cambio mi forma de ver el cafe. Conocer a los productores fue increible.', author: 'Ana Maria R.' },
+  { quote: 'La ruta del cacao en Barlovento fue magica. Recomiendo 100%.', author: 'Carlos G.' },
+  { quote: 'El tour en Merida supero todas mis expectativas. Paisajes y cafe de otro nivel.', author: 'Laura P.' },
 ];
 
 export default function HomePage() {
-  const heroRef = useRef<HTMLDivElement>(null);
-  const aboutRef = useRef<HTMLDivElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
-  const servicesRef = useRef<HTMLDivElement>(null);
-  const testimonialsRef = useRef<HTMLDivElement>(null);
+  const aboutRef = useRef(null);
+  const gridRef = useRef(null);
+  const servicesRef = useRef(null);
+  const testimonialsRef = useRef(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Hero entrance
       gsap.fromTo('.hero-label', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: 0.2 });
       gsap.fromTo('.hero-headline', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: 0.4 });
       gsap.fromTo('.hero-divider', { scaleX: 0 }, { scaleX: 1, duration: 1, ease: 'power3.inOut', delay: 0.6 });
       gsap.fromTo('.hero-caption', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: 0.9 });
 
-      // About section
       gsap.fromTo('.about-card', { opacity: 0, x: -60 }, {
         opacity: 1, x: 0, duration: 0.8, stagger: 0.15, ease: 'power3.out',
         scrollTrigger: { trigger: aboutRef.current, start: 'top 80%' }
@@ -57,7 +48,6 @@ export default function HomePage() {
         scrollTrigger: { trigger: '.service-col-wrapper', start: 'top 80%' }
       });
 
-      // Grid section
       gsap.fromTo('.grid-section-header', { opacity: 0, y: 40 }, {
         opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
         scrollTrigger: { trigger: gridRef.current, start: 'top 80%' }
@@ -67,29 +57,34 @@ export default function HomePage() {
         scrollTrigger: { trigger: '.exp-grid', start: 'top 80%' }
       });
 
-      // Journey banner
       gsap.fromTo('.journey-content > *', { opacity: 0, y: 40 }, {
         opacity: 1, y: 0, duration: 1, stagger: 0.15, ease: 'power3.out',
         scrollTrigger: { trigger: '.journey-section', start: 'top 80%' }
       });
 
-      // Services
       gsap.fromTo('.services-header > *', { opacity: 0, y: 40 }, {
         opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: 'power3.out',
         scrollTrigger: { trigger: servicesRef.current, start: 'top 80%' }
       });
-      gsap.utils.toArray<HTMLElement>('.service-row').forEach((row) => {
-        gsap.fromTo(row.querySelector('.service-img'), { opacity: 0, x: -60 }, {
-          opacity: 1, x: 0, duration: 0.8, ease: 'power3.out',
-          scrollTrigger: { trigger: row, start: 'top 80%' }
-        });
-        gsap.fromTo(row.querySelector('.service-text'), { opacity: 0, y: 40 }, {
-          opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
-          scrollTrigger: { trigger: row, start: 'top 80%' }
-        });
+
+      const serviceRows = gsap.utils.toArray('.service-row') as HTMLElement[];
+      serviceRows.forEach((row) => {
+        const imgEl = row.querySelector('.service-img');
+        const textEl = row.querySelector('.service-text');
+        if (imgEl) {
+          gsap.fromTo(imgEl, { opacity: 0, x: -60 }, {
+            opacity: 1, x: 0, duration: 0.8, ease: 'power3.out',
+            scrollTrigger: { trigger: row, start: 'top 80%' }
+          });
+        }
+        if (textEl) {
+          gsap.fromTo(textEl, { opacity: 0, y: 40 }, {
+            opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+            scrollTrigger: { trigger: row, start: 'top 80%' }
+          });
+        }
       });
 
-      // Testimonials
       gsap.fromTo('.testimonial-card', { opacity: 0, y: 40 }, {
         opacity: 1, y: 0, duration: 0.8, stagger: 0.15, ease: 'power3.out',
         scrollTrigger: { trigger: testimonialsRef.current, start: 'top 80%' }
@@ -99,89 +94,97 @@ export default function HomePage() {
     return () => ctx.revert();
   }, []);
 
+  const siteUrl = import.meta.env.VITE_SITE_URL || 'https://latazanomada.com';
+
+  const schemas = [
+    generateOrganizationSchema({
+      name: 'La Taza Nomada',
+      url: siteUrl,
+      logo: `${siteUrl}/logo.png`,
+      sameAs: [
+        'https://www.instagram.com/latazanomada/',
+        'https://www.tiktok.com/@latazanomada',
+        'https://www.facebook.com/latazanomada',
+      ],
+      contactPoint: {
+        telephone: '+58-412-1234567',
+        contactType: 'customer service',
+        areaServed: 'VE, MX',
+      },
+    }),
+    generateLocalBusinessSchema(),
+  ];
+
   return (
-    <div>
+    <>
+      <SEO
+        title="La Taza Nomada"
+        description="Cafe de origen seleccionado de las mejores regiones cafetaleras. Una experiencia sensorial unica que viaja contigo."
+        url="/"
+        type="website"
+        schema={schemas}
+      />
+
       {/* Hero Section */}
-      <section
-        ref={heroRef}
-        className="min-h-[100dvh] flex items-center justify-center relative overflow-hidden"
-        style={{ backgroundColor: 'var(--cream)' }}
-      >
-        <div className="absolute inset-0 z-0">
-          <img
-            src="/images/hero-background-1.jpg"
-            alt=""
-            className="w-full h-full object-cover opacity-20"
-          />
+      <section className="relative h-screen flex items-center justify-center overflow-hidden bg-[#38201E]">
+        <div className="absolute inset-0 opacity-40">
+          <img src="/images/hero.jpg" alt="Cafe y cacao" className="w-full h-full object-cover" />
         </div>
-        <div className="content-max-width relative z-10 pt-24">
-          <p className="hero-label font-label opacity-0" style={{ color: 'var(--warm-brown)', opacity: 0.7 }}>
-            La Taza Nomada — Viajes de Cafe y Cacao
-          </p>
-          <h1 className="hero-headline font-display mt-6 opacity-0" style={{ fontSize: 'clamp(48px, 8vw, 96px)', color: 'var(--dark-coffee)' }}>
-            Descubre los secretos del{' '}
-            <span style={{ color: 'var(--terracotta)' }}>cafe</span> y cacao venezolano.
+        <div className="relative z-10 text-center px-6 max-w-4xl">
+          <p className="hero-label font-label text-[#D5B073] mb-4 opacity-0">Descubre los secretos del cafe y cacao venezolano.</p>
+          <h1 className="hero-headline font-display text-5xl md:text-7xl lg:text-8xl text-[#F0EAD6] mb-6 opacity-0">
+            La Taza Nomada
           </h1>
-          <div
-            className="hero-divider my-12 h-px origin-center"
-            style={{ backgroundColor: 'var(--dark-coffee)', opacity: 0.2 }}
-          />
-          <p className="hero-caption font-body max-w-md opacity-0" style={{ color: 'var(--warm-brown)', opacity: 0.8, fontSize: 'clamp(16px, 1.2vw, 18px)' }}>
+          <div className="hero-divider w-24 h-px bg-[#D5B073] mx-auto mb-6 origin-center" />
+          <p className="hero-caption font-body text-lg text-[#F0EAD6]/80 max-w-2xl mx-auto opacity-0">
             Explora paisajes extraordinarios, conecta con productores locales y disfruta de experiencias unicas que despertaran tus sentidos.
           </p>
         </div>
       </section>
 
       {/* About Section */}
-      <section ref={aboutRef} className="section-padding relative overflow-hidden" style={{ backgroundColor: 'var(--cream)' }}>
-        <div className="absolute inset-0 z-0">
-          <img src="/images/about-background.jpg" alt="" className="w-full h-full object-cover opacity-30" />
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, var(--cream) 0%, transparent 30%, transparent 70%, var(--cream) 100%)' }} />
-        </div>
-        <div className="content-max-width relative z-10">
-          <div className="flex flex-col md:flex-row gap-6 mb-16">
-            <div className="about-card bg-[rgba(250,247,242,0.85)] backdrop-blur-sm p-6 rounded-lg">
-              <p className="font-label" style={{ color: 'var(--terracotta)' }}>Sobre Nosotros</p>
-            </div>
-            <div className="about-card bg-[rgba(250,247,242,0.85)] backdrop-blur-sm p-6 rounded-lg md:mt-8">
-              <h2 className="font-display text-2xl md:text-4xl" style={{ color: 'var(--dark-coffee)' }}>
+      <section ref={aboutRef} className="py-24 md:py-32 bg-[#F0EAD6]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div>
+              <p className="font-label text-[#63341F] mb-4">Sobre Nosotros</p>
+              <h2 className="font-display text-4xl md:text-5xl text-[#38201E] mb-6">
                 Nuestra historia, tu proxima aventura.
               </h2>
             </div>
-          </div>
-          <div className="service-col-wrapper grid md:grid-cols-3 gap-8">
-            {[
-              { title: 'Itinerarios', text: 'Creamos experiencias inolvidables que incluyen talleres, degustaciones y encuentros con los agricultores. Ven y descubre de donde proviene el autentico sabor.' },
-              { title: 'Productores', text: 'Facilitamos la conexion entre caficultores y consumidores, asegurando que cada producto llegue de manera justa y sostenible.' },
-              { title: 'Tienda Online', text: 'Descubre nuestra seleccion de merchandising y productos exclusivos directamente desde el corazon de la tradicion cafetera.' },
-            ].map((col) => (
-              <div key={col.title} className="service-col p-6 rounded-lg transition-colors hover:bg-[rgba(26,20,16,0.02)]" style={{ borderTop: '1px solid var(--light-border)' }}>
-                <h3 className="font-label mb-4" style={{ color: 'var(--terracotta)' }}>{col.title}</h3>
-                <p className="font-body text-sm" style={{ color: 'var(--warm-brown)' }}>{col.text}</p>
-              </div>
-            ))}
+            <div className="space-y-8">
+              {[
+                { title: 'Itinerarios', text: 'Creamos experiencias inolvidables que incluyen talleres, degustaciones y encuentros con los agricultores. Ven y descubre de donde proviene el autentico sabor.' },
+                { title: 'Productores', text: 'Facilitamos la conexion entre caficultores y consumidores, asegurando que cada producto llegue de manera justa y sostenible.' },
+                { title: 'Tienda Online', text: 'Descubre nuestra seleccion de merchandising y productos exclusivos directamente desde el corazon de la tradicion cafetera.' },
+              ].map((col) => (
+                <div key={col.title} className="about-card border-l-2 border-[#63341F] pl-6">
+                  <h3 className="font-display text-xl text-[#38201E] mb-2">{col.title}</h3>
+                  <p className="font-body text-[#38201E]/70">{col.text}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Experience Grid */}
-      <section ref={gridRef} className="section-padding" style={{ backgroundColor: 'var(--cream)' }}>
-        <div className="content-max-width">
-          <h2 className="grid-section-header font-display text-3xl md:text-5xl mb-12" style={{ color: 'var(--dark-coffee)' }}>
-            Experiencias Inolvidables
-          </h2>
-          <div className="exp-grid grid grid-cols-2 md:grid-cols-3 gap-1">
+      <section ref={gridRef} className="py-24 md:py-32 bg-[#38201E]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid-section-header text-center mb-16">
+            <p className="font-label text-[#D5B073] mb-4">Experiencias</p>
+            <h2 className="font-display text-4xl md:text-5xl text-[#F0EAD6]">
+              Experiencias Inolvidables
+            </h2>
+          </div>
+          <div className="exp-grid grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {experiences.map((exp, i) => (
-              <div key={i} className="exp-grid-item relative overflow-hidden group" style={{ aspectRatio: '4/5' }}>
-                <img
-                  src={exp.image}
-                  alt={exp.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-[#1A1410]/20 transition-opacity group-hover:bg-[#1A1410]/10" />
-                <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300" style={{ background: 'linear-gradient(to top, rgba(26,20,16,0.8), transparent)' }}>
-                  <p className="font-label text-xs" style={{ color: 'var(--muted-gold)' }}>{exp.location}</p>
-                  <p className="font-display text-lg mt-1" style={{ color: 'var(--light-text)' }}>{exp.title}</p>
+              <div key={i} className="exp-grid-item group relative overflow-hidden rounded-lg aspect-[3/4] cursor-pointer">
+                <img src={exp.image} alt={exp.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#38201E]/80 to-transparent" />
+                <div className="absolute bottom-0 left-0 p-6">
+                  <p className="font-caption text-[#D5B073] mb-1">{exp.location}</p>
+                  <h3 className="font-display text-xl text-[#F0EAD6]">{exp.title}</h3>
                 </div>
               </div>
             ))}
@@ -190,27 +193,18 @@ export default function HomePage() {
       </section>
 
       {/* Journey Banner */}
-      <section className="journey-section relative min-h-[80vh] flex items-center justify-center overflow-hidden" style={{ minHeight: '600px' }}>
-        <div className="absolute inset-0 z-0">
-          <img
-            src="/images/journey-background.jpg"
-            alt=""
-            className="w-full h-full object-cover"
-            style={{ filter: 'brightness(0.5)' }}
-          />
-        </div>
-        <div className="content-max-width relative z-10 text-center journey-content">
-          <p className="font-label mb-6" style={{ color: 'var(--muted-gold)' }}>Proxima Aventura</p>
-          <h2 className="font-display text-4xl md:text-6xl lg:text-7xl" style={{ color: 'var(--light-text)', maxWidth: '900px', margin: '0 auto' }}>
+      <section className="journey-section py-24 md:py-32 bg-[#63341F]">
+        <div className="journey-content max-w-4xl mx-auto px-6 text-center">
+          <p className="font-label text-[#D5B073] mb-4">Proxima Aventura</p>
+          <h2 className="font-display text-4xl md:text-5xl text-[#F0EAD6] mb-6">
             Ruta Cafe & Cacao por Venezuela.
           </h2>
-          <p className="font-body mt-6 max-w-xl mx-auto" style={{ color: 'rgba(245,237,224,0.8)' }}>
-            Un recorrido unico por los estados productores de cafe y cacao. Descubre locales extraordinarios, conoce a los productores y deja tu resena en cada parada.
+          <p className="font-body text-lg text-[#F0EAD6]/80 mb-8">
+            Un recorrido unico por los estados productores de cafe y cacao. Descubre el origen de tu taza.
           </p>
           <Link
             to="/ruta-cafe-cacao"
-            className="inline-block mt-8 px-10 py-4 text-white font-nav text-sm transition-all hover:scale-[1.02]"
-            style={{ backgroundColor: 'var(--terracotta)', letterSpacing: '1px' }}
+            className="inline-block px-8 py-4 border border-[#F0EAD6] text-[#F0EAD6] font-nav text-sm hover:bg-[#F0EAD6] hover:text-[#38201E] transition-all duration-300"
           >
             Explorar la Ruta
           </Link>
@@ -218,28 +212,24 @@ export default function HomePage() {
       </section>
 
       {/* Services */}
-      <section ref={servicesRef} className="section-padding" style={{ backgroundColor: 'var(--cream)' }}>
-        <div className="content-max-width">
-          <div className="services-header mb-16">
-            <p className="font-label mb-4" style={{ color: 'var(--terracotta)' }}>Nuestros Servicios</p>
-            <h2 className="font-display text-3xl md:text-5xl" style={{ color: 'var(--dark-coffee)' }}>
+      <section ref={servicesRef} className="py-24 md:py-32 bg-[#F0EAD6]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="services-header text-center mb-16">
+            <p className="font-label text-[#63341F] mb-4">Nuestros Servicios</p>
+            <h2 className="font-display text-4xl md:text-5xl text-[#38201E]">
               Todo lo que necesitas para tu aventura cafetera.
             </h2>
           </div>
-          <div className="flex flex-col gap-24">
+          <div className="space-y-16">
             {services.map((svc, i) => (
-              <div
-                key={svc.num}
-                className={`service-row grid md:grid-cols-2 gap-8 items-center ${i % 2 === 1 ? 'md:[direction:rtl]' : ''}`}
-              >
-                <div className={`service-img relative overflow-hidden rounded-lg ${i % 2 === 1 ? 'md:[direction:ltr]' : ''}`} style={{ aspectRatio: '4/3' }}>
-                  <span className="absolute top-4 left-4 font-display text-8xl z-10 pointer-events-none" style={{ color: 'rgba(26,20,16,0.06)' }}>{svc.num}</span>
-                  <img src={svc.image} alt={svc.name} className="w-full h-full object-cover" />
+              <div key={i} className={`service-row grid md:grid-cols-2 gap-8 items-center ${i % 2 === 1 ? 'md:flex-row-reverse' : ''}`}>
+                <div className={`service-img overflow-hidden rounded-lg ${i % 2 === 1 ? 'md:order-2' : ''}`}>
+                  <img src={svc.image} alt={svc.name} className="w-full h-80 object-cover" />
                 </div>
-                <div className={`service-text ${i % 2 === 1 ? 'md:[direction:ltr]' : ''}`}>
-                  <span className="font-display text-7xl" style={{ color: 'rgba(26,20,16,0.06)' }}>{svc.num}</span>
-                  <h3 className="font-label mt-4 mb-4" style={{ color: 'var(--terracotta)' }}>{svc.name}</h3>
-                  <p className="font-body" style={{ color: 'var(--warm-brown)' }}>{svc.desc}</p>
+                <div className={`service-text ${i % 2 === 1 ? 'md:order-1' : ''}`}>
+                  <span className="font-display text-6xl text-[#63341F]/20">{svc.num}</span>
+                  <h3 className="font-display text-2xl text-[#38201E] mt-2 mb-4">{svc.name}</h3>
+                  <p className="font-body text-[#38201E]/70">{svc.desc}</p>
                 </div>
               </div>
             ))}
@@ -248,22 +238,24 @@ export default function HomePage() {
       </section>
 
       {/* Testimonials */}
-      <section ref={testimonialsRef} className="py-24" style={{ backgroundColor: 'var(--warm-overlay)' }}>
-        <div className="content-max-width">
-          <p className="font-label text-center mb-4" style={{ color: 'var(--terracotta)' }}>Testimonios</p>
-          <h2 className="font-display text-3xl md:text-4xl text-center mb-16" style={{ color: 'var(--dark-coffee)' }}>
-            Lo que dicen nuestros viajeros
-          </h2>
+      <section ref={testimonialsRef} className="py-24 md:py-32 bg-[#38201E]">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <p className="font-label text-[#D5B073] mb-4">Testimonios</p>
+            <h2 className="font-display text-4xl md:text-5xl text-[#F0EAD6]">
+              Lo que dicen nuestros viajeros
+            </h2>
+          </div>
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((t, i) => (
-              <div key={i} className="testimonial-card bg-white p-10 rounded-lg" style={{ boxShadow: '0 2px 20px rgba(0,0,0,0.05)' }}>
-                <p className="font-display text-xl italic" style={{ color: 'var(--warm-brown)' }}>"{t.quote}"</p>
-                <p className="font-caption mt-6" style={{ color: 'var(--terracotta)' }}>{t.author}</p>
+              <div key={i} className="testimonial-card bg-[#F0EAD6]/5 border border-[#F0EAD6]/10 rounded-lg p-8">
+                <p className="font-body text-[#F0EAD6]/90 italic mb-6">"{t.quote}"</p>
+                <p className="font-caption text-[#D5B073]">— {t.author}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
-    </div>
+    </>
   );
 }

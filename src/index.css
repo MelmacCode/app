@@ -6,45 +6,62 @@
 
 @layer base {
   :root {
-    --cream: #FAF7F2;
-    --dark-coffee: #1A1410;
-    --warm-brown: #3D2E22;
-    --terracotta: #C17A47;
-    --terracotta-hover: #A8683A;
-    --muted-gold: #B8956A;
-    --light-text: #F5EDE0;
-    --light-border: rgba(26, 20, 16, 0.08);
-    --warm-overlay: rgba(26, 20, 16, 0.03);
-    --error: #C44536;
-    --success: #5A7D4A;
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
+    /* ============================================
+       PALETA LA TAZA NÓMADA — Basada en el Logo
+       ============================================ */
+    --taza-brown: #63341F;
+    --taza-brown-dark: #4A2716;
+    --taza-brown-light: #7A4A32;
+    --taza-cream: #F0EAD6;
+    --taza-cream-light: #F5F0E3;
+    --taza-dark: #38201E;
+    --taza-dark-light: #4A2E2C;
+    --taza-turquoise: #54B9A8;
+    --taza-turquoise-dark: #3D9A8A;
+    --taza-gold: #D5B073;
+    --taza-gold-light: #E4C994;
+    --taza-light: #F5EDE0;
+    --taza-border: rgba(56, 32, 30, 0.08);
+    --taza-border-strong: rgba(56, 32, 30, 0.15);
+    --taza-overlay: rgba(56, 32, 30, 0.03);
+    --taza-overlay-dark: rgba(56, 32, 30, 0.6);
+    --taza-error: #C44536;
+    --taza-success: #54B9A8;
+    --taza-warning: #D5B073;
+
+    /* ============================================
+       shadcn/ui Theme Tokens (HSL)
+       Mapeados a la paleta La Taza Nómada
+       ============================================ */
+    --background: 43 33% 92%;        /* #F0EAD6 */
+    --foreground: 8 25% 17%;         /* #38201E */
+    --card: 43 33% 95%;
+    --card-foreground: 8 25% 17%;
+    --popover: 43 33% 95%;
+    --popover-foreground: 8 25% 17%;
+    --primary: 19 52% 25%;           /* #63341F */
+    --primary-foreground: 43 33% 92%;
+    --secondary: 43 30% 88%;
+    --secondary-foreground: 8 25% 17%;
+    --muted: 43 20% 90%;
+    --muted-foreground: 8 15% 40%;
+    --accent: 168 42% 53%;           /* #54B9A8 */
+    --accent-foreground: 8 25% 17%;
+    --destructive: 6 55% 49%;        /* #C44536 */
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
+    --border: 8 25% 85%;
+    --input: 8 25% 85%;
+    --ring: 19 52% 25%;
     --radius: 0.625rem;
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --sidebar-background: 43 33% 95%;
+    --sidebar-foreground: 8 25% 17%;
+    --sidebar-primary: 19 52% 25%;
+    --sidebar-primary-foreground: 43 33% 92%;
+    --sidebar-accent: 43 30% 88%;
+    --sidebar-accent-foreground: 8 25% 17%;
+    --sidebar-border: 8 20% 85%;
+    --sidebar-ring: 19 52% 25%;
   }
 
   html {
@@ -54,8 +71,8 @@
   body {
     font-family: 'Jost', sans-serif;
     font-weight: 300;
-    color: var(--warm-brown);
-    background-color: var(--cream);
+    color: var(--taza-dark);
+    background-color: var(--taza-cream);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -63,11 +80,17 @@
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Cormorant Garamond', serif;
     font-weight: 400;
-    color: var(--dark-coffee);
+    color: var(--taza-dark);
   }
 
   * {
     @apply border-border;
+  }
+
+  /* Selection color */
+  ::selection {
+    background-color: var(--taza-brown);
+    color: var(--taza-cream);
   }
 }
 
@@ -112,28 +135,49 @@
     text-transform: uppercase;
   }
 
-  .text-terracotta {
-    color: var(--terracotta);
-  }
+  /* ============================================
+     UTILIDADES DE COLOR LA TAZA NÓMADA
+     ============================================ */
+  .text-taza-brown { color: var(--taza-brown); }
+  .text-taza-brown-dark { color: var(--taza-brown-dark); }
+  .text-taza-dark { color: var(--taza-dark); }
+  .text-taza-dark-light { color: var(--taza-dark-light); }
+  .text-taza-turquoise { color: var(--taza-turquoise); }
+  .text-taza-gold { color: var(--taza-gold); }
+  .text-taza-cream { color: var(--taza-cream); }
+  .text-taza-light { color: var(--taza-light); }
 
-  .bg-terracotta {
-    background-color: var(--terracotta);
-  }
+  .bg-taza-brown { background-color: var(--taza-brown); }
+  .bg-taza-brown-dark { background-color: var(--taza-brown-dark); }
+  .bg-taza-brown-light { background-color: var(--taza-brown-light); }
+  .bg-taza-cream { background-color: var(--taza-cream); }
+  .bg-taza-cream-light { background-color: var(--taza-cream-light); }
+  .bg-taza-dark { background-color: var(--taza-dark); }
+  .bg-taza-dark-light { background-color: var(--taza-dark-light); }
+  .bg-taza-turquoise { background-color: var(--taza-turquoise); }
+  .bg-taza-turquoise-dark { background-color: var(--taza-turquoise-dark); }
+  .bg-taza-gold { background-color: var(--taza-gold); }
+  .bg-taza-gold-light { background-color: var(--taza-gold-light); }
 
-  .bg-cream {
-    background-color: var(--cream);
-  }
+  .border-taza-brown { border-color: var(--taza-brown); }
+  .border-taza-gold { border-color: var(--taza-gold); }
+  .border-taza-dark { border-color: var(--taza-dark); }
+  .border-taza-cream { border-color: var(--taza-cream); }
 
-  .bg-dark-coffee {
-    background-color: var(--dark-coffee);
-  }
+  .hover-text-taza-brown:hover { color: var(--taza-brown); }
+  .hover-bg-taza-brown:hover { background-color: var(--taza-brown-dark); }
+  .hover-bg-taza-dark:hover { background-color: var(--taza-dark-light); }
+  .hover-border-taza-brown:hover { border-color: var(--taza-brown); }
 
-  .border-terracotta {
-    border-color: var(--terracotta);
+  /* Gradientes elegantes */
+  .gradient-taza {
+    background: linear-gradient(135deg, var(--taza-brown) 0%, var(--taza-dark) 100%);
   }
-
-  .hover-terracotta:hover {
-    color: var(--terracotta);
+  .gradient-taza-gold {
+    background: linear-gradient(135deg, var(--taza-gold) 0%, var(--taza-brown) 100%);
+  }
+  .gradient-cream {
+    background: linear-gradient(180deg, var(--taza-cream) 0%, var(--taza-cream-light) 100%);
   }
 
   .section-padding {
@@ -158,6 +202,24 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  /* Animaciones suaves */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+  .animate-slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 768px) {
