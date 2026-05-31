@@ -1,17 +1,18 @@
 import { useState } from "react";
+import { X, CheckCircle, ArrowRight, User, Phone, MapPin, MessageSquare } from "lucide-react";
 import { generateWhatsAppCheckoutUrl, validateCustomerInfo, getWhatsAppNumber } from "@/lib/whatsapp";
-import { CheckCircle, AlertCircle, MessageCircle, Truck, User, MapPin, Phone, FileText } from "lucide-react";
+import type { CartItem, CustomerInfo } from "@/lib/whatsapp";
 
 interface WhatsAppCheckoutProps {
-  items: { id: string; name: string; price: number; quantity: number }[];
-  total: number;
+  items: CartItem[];
+  total?: number;
   onClose: () => void;
-  onSuccess: () => void;
+  onSuccess?: () => void;
 }
 
 export default function WhatsAppCheckout({ items, total, onClose, onSuccess }: WhatsAppCheckoutProps) {
-  const [step, setStep] = useState<"form" | "review" | "success">("form");
-  const [formData, setFormData] = useState({
+  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [customer, setCustomer] = useState<CustomerInfo>({
     name: "",
     phone: "",
     address: "",
@@ -19,244 +20,264 @@ export default function WhatsAppCheckout({ items, total, onClose, onSuccess }: W
     notes: "",
   });
   const [errors, setErrors] = useState<string[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const calculatedTotal = total ?? items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const phoneNumber = getWhatsAppNumber();
+
+  const handleInputChange = (field: keyof CustomerInfo, value: string) => {
+    setCustomer((prev) => ({ ...prev, [field]: value }));
     setErrors([]);
   };
 
-  const handleContinue = () => {
-    const validation = validateCustomerInfo(formData);
+  const validateStep1 = () => {
+    const validation = validateCustomerInfo(customer);
     if (!validation.valid) {
       setErrors(validation.errors);
-      return;
+      return false;
     }
-    setStep("review");
+    return true;
   };
 
-  const handleSendOrder = () => {
-    setIsSubmitting(true);
-    const phoneNumber = getWhatsAppNumber();
+  const handleSend = () => {
+    if (!validateStep1()) return;
     if (!phoneNumber) {
-      setErrors(["Numero de WhatsApp no configurado. Contacta al administrador."]);
-      setIsSubmitting(false);
+      setErrors(["El numero de WhatsApp no esta configurado. Contacta al administrador."]);
       return;
     }
 
-    const url = generateWhatsAppCheckoutUrl(items, formData, phoneNumber);
+    const url = generateWhatsAppCheckoutUrl(items, customer, phoneNumber);
     window.open(url, "_blank");
-    setIsSubmitting(false);
-    setStep("success");
-    setTimeout(() => {
+
+    if (onSuccess) {
       onSuccess();
-    }, 2000);
+    }
   };
 
   return (
-    <div className="fixed inset-0 z-[90] flex items-center justify-center p-4 bg-taza-dark/80 backdrop-blur-sm">
-      <div className="relative w-full max-w-lg rounded-xl overflow-hidden bg-taza-cream shadow-taza-xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/50" onClick={onClose}>
+      <div
+        className="max-w-lg w-full rounded-2xl p-6 md:p-8 relative max-h-[90vh] overflow-y-auto"
+        style={{ backgroundColor: "var(--taza-cream)" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Close */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 p-2 rounded-full hover:bg-black/5 transition-colors"
+        >
+          <X className="w-5 h-5" style={{ color: "var(--taza-dark)" }} />
+        </button>
+
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-taza-border">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-taza-turquoise/10 flex items-center justify-center">
-              <MessageCircle className="w-5 h-5 text-taza-turquoise" />
+        <div className="text-center mb-8">
+          <div
+            className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
+            style={{ backgroundColor: "var(--taza-turquoise)" }}
+          >
+            <MessageSquare className="w-8 h-8" style={{ color: "var(--taza-cream)" }} />
+          </div>
+          <h2 className="font-display text-2xl" style={{ color: "var(--taza-dark)" }}>
+            Finalizar por WhatsApp
+          </h2>
+          <p className="font-body text-sm mt-2" style={{ color: "var(--taza-dark-light)" }}>
+            Te redirigiremos a WhatsApp con tu pedido pre-cargado. Solo envia el mensaje.
+          </p>
+        </div>
+
+        {/* Progress */}
+        <div className="flex items-center justify-center gap-2 mb-8">
+          {[1, 2, 3].map((s) => (
+            <div key={s} className="flex items-center gap-2">
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all"
+                style={{
+                  backgroundColor: step >= s ? "var(--taza-brown)" : "var(--taza-border)",
+                  color: step >= s ? "var(--taza-cream)" : "var(--taza-dark-light)",
+                }}
+              >
+                {step > s ? <CheckCircle className="w-4 h-4" /> : s}
+              </div>
+              {s < 3 && (
+                <div
+                  className="w-12 h-[2px]"
+                  style={{ backgroundColor: step > s ? "var(--taza-brown)" : "var(--taza-border)" }}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Errors */}
+        {errors.length > 0 && (
+          <div className="mb-6 p-4 rounded-lg" style={{ backgroundColor: "rgba(196, 69, 54, 0.1)" }}>
+            {errors.map((err, i) => (
+              <p key={i} className="font-body text-sm" style={{ color: "var(--taza-error)" }}>
+                {err}
+              </p>
+            ))}
+          </div>
+        )}
+
+        {/* Step 1: Datos */}
+        {step === 1 && (
+          <div className="space-y-4">
+            <div>
+              <label className="font-caption mb-2 block" style={{ color: "var(--taza-dark)" }}>
+                <User className="w-3 h-3 inline mr-1" />
+                Nombre completo *
+              </label>
+              <input
+                type="text"
+                value={customer.name}
+                onChange={(e) => handleInputChange("name", e.target.value)}
+                className="w-full px-4 py-3 rounded-lg border bg-white/50 text-taza-dark font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors"
+                style={{ borderColor: "var(--taza-border)" }}
+                placeholder="Ej: Maria Gonzalez"
+              />
             </div>
             <div>
-              <h3 className="font-display text-xl text-taza-dark">Checkout WhatsApp</h3>
-              <p className="text-xs text-taza-dark/60 font-body">Pedido rapido sin registro</p>
+              <label className="font-caption mb-2 block" style={{ color: "var(--taza-dark)" }}>
+                <Phone className="w-3 h-3 inline mr-1" />
+                Telefono *
+              </label>
+              <input
+                type="tel"
+                value={customer.phone}
+                onChange={(e) => handleInputChange("phone", e.target.value)}
+                className="w-full px-4 py-3 rounded-lg border bg-white/50 text-taza-dark font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors"
+                style={{ borderColor: "var(--taza-border)" }}
+                placeholder="Ej: 0412-1234567"
+              />
             </div>
+            <div>
+              <label className="font-caption mb-2 block" style={{ color: "var(--taza-dark)" }}>
+                <MapPin className="w-3 h-3 inline mr-1" />
+                Direccion completa *
+              </label>
+              <input
+                type="text"
+                value={customer.address}
+                onChange={(e) => handleInputChange("address", e.target.value)}
+                className="w-full px-4 py-3 rounded-lg border bg-white/50 text-taza-dark font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors"
+                style={{ borderColor: "var(--taza-border)" }}
+                placeholder="Ej: Av. Principal, Edificio XYZ, Piso 2"
+              />
+            </div>
+            <div>
+              <label className="font-caption mb-2 block" style={{ color: "var(--taza-dark-light)" }}>
+                Ciudad (opcional)
+              </label>
+              <input
+                type="text"
+                value={customer.city}
+                onChange={(e) => handleInputChange("city", e.target.value)}
+                className="w-full px-4 py-3 rounded-lg border bg-white/50 text-taza-dark font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors"
+                style={{ borderColor: "var(--taza-border)" }}
+                placeholder="Ej: Caracas"
+              />
+            </div>
+            <div>
+              <label className="font-caption mb-2 block" style={{ color: "var(--taza-dark-light)" }}>
+                Notas (opcional)
+              </label>
+              <textarea
+                value={customer.notes}
+                onChange={(e) => handleInputChange("notes", e.target.value)}
+                rows={2}
+                className="w-full px-4 py-3 rounded-lg border bg-white/50 text-taza-dark font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors resize-none"
+                style={{ borderColor: "var(--taza-border)" }}
+                placeholder="Ej: Entregar en la manana"
+              />
+            </div>
+            <button
+              onClick={() => validateStep1() && setStep(2)}
+              className="w-full py-4 rounded-lg font-nav flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02]"
+              style={{ backgroundColor: "var(--taza-brown)", color: "var(--taza-cream)" }}
+            >
+              Revisar pedido
+              <ArrowRight className="w-4 h-4" />
+            </button>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 text-taza-dark hover:text-taza-brown transition-colors"
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-        </div>
+        )}
 
-        {/* Step indicator */}
-        <div className="flex items-center px-6 py-4 gap-2">
-          {["Datos", "Revision", "Confirmacion"].map((label, i) => {
-            const stepIndex = ["form", "review", "success"].indexOf(step);
-            const isActive = i === stepIndex;
-            const isCompleted = i < stepIndex;
-            return (
-              <div key={label} className="flex items-center gap-2">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium transition-colors ${
-                  isActive ? "bg-taza-brown text-white" : isCompleted ? "bg-taza-turquoise text-white" : "bg-taza-border text-taza-dark/50"
-                }`}>
-                  {isCompleted ? <CheckCircle size={14} /> : i + 1}
-                </div>
-                <span className={`text-xs font-body ${isActive ? "text-taza-dark" : "text-taza-dark/50"}`}>{label}</span>
-                {i < 2 && <div className={`w-8 h-px ${isCompleted ? "bg-taza-turquoise" : "bg-taza-border"}`} />}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Content */}
-        <div className="px-6 pb-6">
-          {step === "form" && (
-            <div className="space-y-4 animate-fade-in">
-              <div className="bg-taza-gold/10 rounded-lg p-4 mb-4">
-                <p className="text-sm text-taza-dark font-body">
-                  💬 Te redirigiremos a WhatsApp con tu pedido pre-cargado. Solo envia el mensaje.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <label className="flex items-center gap-2 text-sm font-label text-taza-dark">
-                  <User size={14} /> Nombre completo *
-                </label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange("name", e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg border border-taza-border bg-white/50 text-taza-dark font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors"
-                  placeholder="Ej: Maria Gonzalez"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="flex items-center gap-2 text-sm font-label text-taza-dark">
-                  <Phone size={14} /> Telefono *
-                </label>
-                <input
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => handleInputChange("phone", e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg border border-taza-border bg-white/50 text-taza-dark font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors"
-                  placeholder="Ej: 0412-1234567"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="flex items-center gap-2 text-sm font-label text-taza-dark">
-                  <MapPin size={14} /> Direccion completa *
-                </label>
-                <textarea
-                  value={formData.address}
-                  onChange={(e) => handleInputChange("address", e.target.value)}
-                  rows={2}
-                  className="w-full px-4 py-3 rounded-lg border border-taza-border bg-white/50 text-taza-dark font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors resize-none"
-                  placeholder="Calle, numero, apartamento, urbanizacion..."
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="flex items-center gap-2 text-sm font-label text-taza-dark">
-                  <Truck size={14} /> Ciudad
-                </label>
-                <input
-                  type="text"
-                  value={formData.city}
-                  onChange={(e) => handleInputChange("city", e.target.value)}
-                  className="w-full px-4 py-3 rounded-lg border border-taza-border bg-white/50 text-taza-dark font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors"
-                  placeholder="Ej: Caracas"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="flex items-center gap-2 text-sm font-label text-taza-dark">
-                  <FileText size={14} /> Notas adicionales
-                </label>
-                <textarea
-                  value={formData.notes}
-                  onChange={(e) => handleInputChange("notes", e.target.value)}
-                  rows={2}
-                  className="w-full px-4 py-3 rounded-lg border border-taza-border bg-white/50 text-taza-dark font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors resize-none"
-                  placeholder="Instrucciones especiales de entrega..."
-                />
-              </div>
-
-              {errors.length > 0 && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                  <div className="flex items-center gap-2 text-red-600 mb-1">
-                    <AlertCircle size={16} />
-                    <span className="text-sm font-medium">Corrige los siguientes errores:</span>
+        {/* Step 2: Revision */}
+        {step === 2 && (
+          <div>
+            <h3 className="font-display text-xl mb-4" style={{ color: "var(--taza-dark)" }}>Resumen del pedido</h3>
+            <div className="space-y-3 mb-6">
+              {items.map((item, i) => (
+                <div key={item.id} className="flex justify-between items-center p-3 rounded-lg" style={{ backgroundColor: "var(--taza-cream-light)" }}>
+                  <div>
+                    <p className="font-body text-sm" style={{ color: "var(--taza-dark)" }}>
+                      {i + 1}. {item.name}
+                    </p>
+                    <p className="font-caption" style={{ color: "var(--taza-dark-light)" }}>
+                      {item.quantity}x ${item.price.toFixed(2)}
+                    </p>
                   </div>
-                  <ul className="text-sm text-red-600 font-body list-disc list-inside">
-                    {errors.map((err, i) => <li key={i}>{err}</li>)}
-                  </ul>
+                  <p className="font-body font-medium" style={{ color: "var(--taza-brown)" }}>
+                    ${(item.price * item.quantity).toFixed(2)}
+                  </p>
                 </div>
-              )}
-
+              ))}
+            </div>
+            <div className="border-t pt-4 mb-6" style={{ borderColor: "var(--taza-border)" }}>
+              <div className="flex justify-between items-center">
+                <span className="font-body" style={{ color: "var(--taza-dark-light)" }}>Total ({totalItems} articulos)</span>
+                <span className="font-display text-2xl" style={{ color: "var(--taza-dark)" }}>
+                  ${calculatedTotal.toFixed(2)}
+                </span>
+              </div>
+            </div>
+            <div className="flex gap-3">
               <button
-                onClick={handleContinue}
-                className="w-full py-4 text-white font-nav bg-taza-brown hover:bg-taza-brown-dark transition-colors rounded-lg"
+                onClick={() => setStep(1)}
+                className="flex-1 py-3 rounded-lg font-nav border transition-all"
+                style={{ borderColor: "var(--taza-border)", color: "var(--taza-dark)" }}
               >
-                Revisar Pedido →
+                Atras
+              </button>
+              <button
+                onClick={() => setStep(3)}
+                className="flex-1 py-3 rounded-lg font-nav transition-all duration-300 hover:scale-[1.02]"
+                style={{ backgroundColor: "var(--taza-brown)", color: "var(--taza-cream)" }}
+              >
+                Confirmar
               </button>
             </div>
-          )}
+          </div>
+        )}
 
-          {step === "review" && (
-            <div className="space-y-4 animate-fade-in">
-              <div className="bg-white/50 rounded-lg p-4 border border-taza-border">
-                <h4 className="font-label text-sm text-taza-dark mb-3">Resumen del pedido</h4>
-                <div className="space-y-2">
-                  {items.map((item) => (
-                    <div key={item.id} className="flex justify-between text-sm font-body">
-                      <span className="text-taza-dark">{item.name} x{item.quantity}</span>
-                      <span className="text-taza-brown font-medium">${(item.price * item.quantity).toFixed(2)}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="border-t border-taza-border mt-3 pt-3 flex justify-between">
-                  <span className="font-label text-taza-dark">Total</span>
-                  <span className="font-display text-xl text-taza-brown">${total.toFixed(2)}</span>
-                </div>
-              </div>
-
-              <div className="bg-white/50 rounded-lg p-4 border border-taza-border">
-                <h4 className="font-label text-sm text-taza-dark mb-2">Datos de envio</h4>
-                <p className="text-sm font-body text-taza-dark"><strong>{formData.name}</strong></p>
-                <p className="text-sm font-body text-taza-dark/70">{formData.phone}</p>
-                <p className="text-sm font-body text-taza-dark/70">{formData.address}</p>
-                {formData.city && <p className="text-sm font-body text-taza-dark/70">{formData.city}</p>}
-                {formData.notes && <p className="text-sm font-body text-taza-dark/50 mt-1 italic">{formData.notes}</p>}
-              </div>
-
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setStep("form")}
-                  className="flex-1 py-3 border border-taza-border text-taza-dark font-nav text-sm hover:border-taza-brown transition-colors rounded-lg"
-                >
-                  ← Volver
-                </button>
-                <button
-                  onClick={handleSendOrder}
-                  disabled={isSubmitting}
-                  className="flex-[2] py-3 text-white font-nav bg-taza-turquoise hover:bg-taza-turquoise-dark transition-colors rounded-lg flex items-center justify-center gap-2"
-                >
-                  <MessageCircle size={18} />
-                  {isSubmitting ? "Abriendo WhatsApp..." : "Enviar por WhatsApp"}
-                </button>
-              </div>
+        {/* Step 3: Confirmacion */}
+        {step === 3 && (
+          <div className="text-center">
+            <div className="mb-6 p-4 rounded-lg" style={{ backgroundColor: "var(--taza-cream-light)" }}>
+              <p className="font-body text-sm mb-2" style={{ color: "var(--taza-dark-light)" }}>Enviaremos tu pedido a:</p>
+              <p className="font-body font-medium" style={{ color: "var(--taza-dark)" }}>WhatsApp +{phoneNumber}</p>
             </div>
-          )}
-
-          {step === "success" && (
-            <div className="text-center py-8 animate-fade-in">
-              <div className="w-16 h-16 rounded-full bg-taza-turquoise/10 flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-taza-turquoise" />
-              </div>
-              <h4 className="font-display text-2xl text-taza-dark mb-2">¡Pedido enviado!</h4>
-              <p className="font-body text-taza-dark/70 mb-4">
-                Se abrio WhatsApp con tu pedido. Solo presiona enviar y te contactaremos para confirmar.
-              </p>
-              <div className="bg-taza-gold/10 rounded-lg p-3 inline-block">
-                <p className="text-sm text-taza-dark font-body">
-                  ⏱️ Tiempo de respuesta: 15-30 minutos
-                </p>
-              </div>
+            <p className="font-body text-sm mb-6" style={{ color: "var(--taza-dark-light)" }}>
+              Al hacer clic en "Enviar por WhatsApp", se abrira una nueva pestana con tu pedido pre-cargado.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setStep(2)}
+                className="flex-1 py-3 rounded-lg font-nav border transition-all"
+                style={{ borderColor: "var(--taza-border)", color: "var(--taza-dark)" }}
+              >
+                Atras
+              </button>
+              <button
+                onClick={handleSend}
+                className="flex-1 py-3 rounded-lg font-nav flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02]"
+                style={{ backgroundColor: "var(--taza-turquoise)", color: "var(--taza-cream)" }}
+              >
+                <MessageSquare className="w-4 h-4" />
+                Enviar por WhatsApp
+              </button>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );

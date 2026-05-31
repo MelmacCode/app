@@ -1,4 +1,4 @@
-import { Instagram, Facebook, Twitter, Youtube, ExternalLink } from "lucide-react";
+import { Instagram, Facebook, Youtube, ExternalLink } from "lucide-react";
 import { SEO } from "@/hooks/useSEO";
 import LazyImage from "@/components/LazyImage";
 
@@ -40,7 +40,7 @@ const socials = [
     icon: Youtube,
     color: "#FF0000",
     followers: "3.1K",
-    description: "Documentales de nuestras rutas, tutales y entrevistas a productores.",
+    description: "Documentales de nuestras rutas, tutoriales y entrevistas a productores.",
     image: "/images/social-youtube.jpg",
   },
 ];
@@ -76,7 +76,7 @@ export default function RedesPage() {
               className="group rounded-2xl overflow-hidden border transition-all duration-300 hover:shadow-lg"
               style={{ borderColor: "var(--taza-border)", backgroundColor: "var(--taza-cream)" }}
             >
-              <div className="aspect-[16/9] overflow-hidden">
+              <div className="relative aspect-[16/9] overflow-hidden">
                 <LazyImage
                   src={social.image}
                   alt={social.name}

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Calendar, Clock, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { blogPosts, blogCategories, type BlogPost } from "@/data/blog";
+import { blogPosts, blogCategories } from "@/data/blog";
 import { SEO } from "@/hooks/useSEO";
 import LazyImage from "@/components/LazyImage";
 

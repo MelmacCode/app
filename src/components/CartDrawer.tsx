@@ -5,7 +5,7 @@ import WhatsAppCheckout from "./WhatsAppCheckout";
 import { toast } from "sonner";
 
 export default function CartDrawer() {
-  const { items, isOpen, setIsOpen, removeItem, updateQuantity, totalPrice, totalItems, getProduct } = useCartStore();
+  const { items, isOpen, setIsOpen, removeItem, updateQuantity, totalPrice, totalItems, getProduct, clearCart } = useCartStore();
   const [showCheckout, setShowCheckout] = useState(false);
   const [detailProduct, setDetailProduct] = useState<string | null>(null);
 
@@ -15,7 +15,7 @@ export default function CartDrawer() {
   const handleRemove = (productId: string) => {
     const product = getProduct(productId);
     removeItem(productId);
-    toast.success(`${product?.name || "Producto"} eliminado del carrito`, {
+    toast.success((product?.name || "Producto") + " eliminado del carrito", {
       description: "Se ha removido correctamente",
     });
   };
@@ -24,8 +24,8 @@ export default function CartDrawer() {
     const product = getProduct(productId);
     if (quantity > 0) {
       updateQuantity(productId, quantity);
-      toast.success(`Cantidad actualizada`, {
-        description: `${product?.name}: ${quantity} unidad${quantity > 1 ? "es" : ""}`,
+      toast.success("Cantidad actualizada", {
+        description: (product?.name || "Producto") + ": " + quantity + " unidad" + (quantity > 1 ? "es" : ""),
       });
     }
   };
@@ -86,7 +86,7 @@ export default function CartDrawer() {
               <div className="flex flex-col items-center justify-center h-full gap-4">
                 <ShoppingBag className="w-16 h-16 opacity-20" style={{ color: "var(--taza-dark)" }} />
                 <p className="font-body text-center" style={{ color: "var(--taza-dark-light)" }}>
-                  Tu carrito está vacío
+                  Tu carrito esta vacio
                 </p>
                 <button
                   onClick={() => setIsOpen(false)}
@@ -225,7 +225,15 @@ export default function CartDrawer() {
               quantity: i.quantity,
             };
           })}
+          total={totalPrice()}
           onClose={() => setShowCheckout(false)}
+          onSuccess={() => {
+            setShowCheckout(false);
+            clearCart();
+            toast.success("Pedido enviado por WhatsApp", {
+              description: "Gracias por tu compra. Te contactaremos pronto.",
+            });
+          }}
         />
       )}
     </>

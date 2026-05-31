@@ -19,6 +19,9 @@ export default function Header() {
   const totalItems = useCartStore((s) => s.totalItems());
   const setCartOpen = useCartStore((s) => s.setIsOpen);
 
+  // Detectar si estamos en la pagina de inicio SIN scroll (sobre el hero oscuro)
+  const isOverDarkHero = location.pathname === "/" && !isScrolled;
+
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll);
@@ -29,29 +32,37 @@ export default function Header() {
     setMobileOpen(false);
   }, [location]);
 
+  // Colores adaptativos segun el fondo
+  const textColor = isOverDarkHero ? "var(--taza-cream)" : "var(--taza-dark)";
+  const bgColor = isScrolled
+    ? "rgba(240, 234, 214, 0.95)"
+    : isOverDarkHero
+    ? "rgba(56, 32, 30, 0.35)"
+    : "transparent";
+  const underlineColor = isOverDarkHero ? "var(--taza-gold)" : "var(--taza-brown)";
+  const cartBadgeBg = isOverDarkHero ? "var(--taza-gold)" : "var(--taza-brown)";
+  const cartBadgeText = isOverDarkHero ? "var(--taza-dark)" : "var(--taza-cream)";
+
   return (
     <>
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          isScrolled
-            ? "shadow-md backdrop-blur-md"
-            : ""
+          isScrolled ? "shadow-md backdrop-blur-md" : ""
         }`}
         style={{
           height: "80px",
-          backgroundColor: isScrolled
-            ? "rgba(240, 234, 214, 0.95)"
-            : "transparent",
+          backgroundColor: bgColor,
+          borderBottom: isScrolled ? "1px solid var(--taza-border)" : "none",
         }}
       >
         <div className="h-full flex items-center justify-between content-max-width">
-          {/* Logo */}
+          {/* Logo — MAS GRANDE */}
           <Link to="/" className="flex items-center gap-3">
             <img
-              src="/logo.jpeg"
+              src="/logo.png"
               alt="La Taza Nomada"
-              className="h-14 w-auto object-contain"
-              style={{ maxHeight: "56px" }}
+              className="h-16 w-auto object-contain"
+              style={{ maxHeight: "64px", filter: isOverDarkHero ? "brightness(1.1)" : "none" }}
             />
           </Link>
 
@@ -62,12 +73,12 @@ export default function Header() {
                 key={link.to}
                 to={link.to}
                 className="font-nav relative group"
-                style={{ color: "var(--taza-dark)" }}
+                style={{ color: textColor }}
               >
                 {link.label}
                 <span
                   className="absolute bottom-0 left-0 h-[1px] w-0 group-hover:w-full transition-all duration-300"
-                  style={{ backgroundColor: "var(--taza-brown)" }}
+                  style={{ backgroundColor: underlineColor }}
                 />
               </Link>
             ))}
@@ -77,8 +88,8 @@ export default function Header() {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setCartOpen(true)}
-              className="relative p-2 rounded-full transition-colors"
-              style={{ color: "var(--taza-dark)" }}
+              className="relative p-2 rounded-full transition-colors hover:bg-white/10"
+              style={{ color: textColor }}
               aria-label="Abrir carrito"
             >
               <ShoppingBag className="w-5 h-5" />
@@ -86,8 +97,8 @@ export default function Header() {
                 <span
                   className="absolute -top-1 -right-1 w-5 h-5 rounded-full text-xs flex items-center justify-center font-medium"
                   style={{
-                    backgroundColor: "var(--taza-brown)",
-                    color: "var(--taza-cream)",
+                    backgroundColor: cartBadgeBg,
+                    color: cartBadgeText,
                   }}
                 >
                   {totalItems}
@@ -96,9 +107,9 @@ export default function Header() {
             </button>
 
             <button
-              className="md:hidden p-2"
+              className="md:hidden p-2 rounded-full transition-colors hover:bg-white/10"
               onClick={() => setMobileOpen(!mobileOpen)}
-              style={{ color: "var(--taza-dark)" }}
+              style={{ color: textColor }}
               aria-label="Toggle menu"
             >
               {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}

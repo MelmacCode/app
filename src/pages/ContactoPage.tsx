@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Send, MapPin, Phone, Mail, Clock, CheckCircle } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, CheckCircle } from "lucide-react";
 import { SEO } from "@/hooks/useSEO";
-import ContactForm from "@/components/ContactForm";
+import { ContactForm } from "@/components/ContactForm";
 
 export default function ContactoPage() {
   const [sent, setSent] = useState(false);

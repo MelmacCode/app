@@ -2,7 +2,6 @@ import { useState } from "react";
 import { MapPin, Star, Send, X } from "lucide-react";
 import { venezuelaStates, type Review } from "@/data/map";
 import { SEO } from "@/hooks/useSEO";
-import LazyImage from "@/components/LazyImage";
 
 export default function RutaPage() {
   const [selectedState, setSelectedState] = useState(venezuelaStates[0]);
