@@ -1,102 +1,151 @@
-import { useCartStore } from '@/stores/cartStore';
-import { useState } from 'react';
-import WhatsAppCheckout from './WhatsAppCheckout';
+import { useState } from "react";
+import { X, Plus, Minus, Trash2, ShoppingBag, ArrowRight } from "lucide-react";
+import { useCartStore } from "@/stores/cartStore";
+import WhatsAppCheckout from "./WhatsAppCheckout";
+import { toast } from "sonner";
 
 export default function CartDrawer() {
-  const { items, isOpen, setIsOpen, removeItem, updateQuantity, totalPrice, getProduct } = useCartStore();
-  const [detailProduct, setDetailProduct] = useState<string | null>(null);
+  const { items, isOpen, setIsOpen, removeItem, updateQuantity, totalPrice, totalItems, getProduct, clearCart } = useCartStore();
   const [showCheckout, setShowCheckout] = useState(false);
+  const [detailProduct, setDetailProduct] = useState<string | null>(null);
 
-  const detailProductData = detailProduct ? getProduct(detailProduct) : null;
-  const detailItem = detailProduct ? items.find((i) => i.productId === detailProduct) : null;
+  const detailProductData = detailProduct ? getProduct(detailProduct) : undefined;
+  const detailItem = detailProduct ? items.find((i) => i.productId === detailProduct) : undefined;
 
-  const cartItems = items.map((item) => {
-    const product = getProduct(item.productId);
-    return product ? { id: item.productId, name: product.name, price: product.price, quantity: item.quantity } : null;
-  }).filter(Boolean) as { id: string; name: string; price: number; quantity: number }[];
+  const handleRemove = (productId: string) => {
+    const product = getProduct(productId);
+    removeItem(productId);
+    toast.success((product?.name || "Producto") + " eliminado del carrito", {
+      description: "Se ha removido correctamente",
+    });
+  };
+
+  const handleUpdateQuantity = (productId: string, quantity: number) => {
+    const product = getProduct(productId);
+    if (quantity > 0) {
+      updateQuantity(productId, quantity);
+      toast.success("Cantidad actualizada", {
+        description: (product?.name || "Producto") + ": " + quantity + " unidad" + (quantity > 1 ? "es" : ""),
+      });
+    }
+  };
 
   return (
     <>
+      {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-[60] bg-taza-dark/30 transition-opacity"
-          onClick={() => setIsOpen(false)}
+          className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
+          onClick={() => {
+            setIsOpen(false);
+            setShowCheckout(false);
+            setDetailProduct(null);
+          }}
         />
       )}
 
+      {/* Drawer */}
       <div
-        className={`fixed top-0 right-0 h-full z-[70] transition-transform duration-350 ease-[cubic-bezier(0.76,0,0.24,1)] ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed top-0 right-0 h-full z-50 w-full max-w-md transition-transform duration-500 ease-out ${
+          isOpen ? "translate-x-0" : "translate-x-full"
         }`}
-        style={{
-          width: 'clamp(320px, 90vw, 450px)',
-          backgroundColor: 'var(--taza-cream)',
-        }}
+        style={{ backgroundColor: "var(--taza-cream)" }}
       >
         <div className="h-full flex flex-col">
-          <div className="flex items-center justify-between p-6 border-b border-taza-border">
-            <h2 className="font-display text-3xl text-taza-dark">Tu Carrito</h2>
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b" style={{ borderColor: "var(--taza-border)" }}>
+            <div className="flex items-center gap-3">
+              <ShoppingBag className="w-5 h-5" style={{ color: "var(--taza-brown)" }} />
+              <h2 className="font-display text-2xl" style={{ color: "var(--taza-dark)" }}>
+                Tu Carrito
+              </h2>
+              {totalItems() > 0 && (
+                <span
+                  className="px-2 py-0.5 rounded-full text-xs font-medium"
+                  style={{ backgroundColor: "var(--taza-brown)", color: "var(--taza-cream)" }}
+                >
+                  {totalItems()} items
+                </span>
+              )}
+            </div>
             <button
-              onClick={() => setIsOpen(false)}
-              className="p-2 text-taza-dark hover:text-taza-brown transition-colors"
-              aria-label="Cerrar carrito"
+              onClick={() => {
+                setIsOpen(false);
+                setShowCheckout(false);
+                setDetailProduct(null);
+              }}
+              className="p-2 rounded-full hover:bg-black/5 transition-colors"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
+              <X className="w-5 h-5" style={{ color: "var(--taza-dark)" }} />
             </button>
           </div>
 
+          {/* Items */}
           <div className="flex-1 overflow-y-auto p-6">
             {items.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-center">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="text-taza-dark/40">
-                  <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
-                  <line x1="3" y1="6" x2="21" y2="6" />
-                  <path d="M16 10a4 4 0 01-8 0" />
-                </svg>
-                <p className="mt-4 font-body text-taza-dark/60">Tu carrito está vacío</p>
-                <p className="mt-2 font-body text-sm text-taza-dark/40">Explora nuestra tienda y encuentra tu café perfecto</p>
+              <div className="flex flex-col items-center justify-center h-full gap-4">
+                <ShoppingBag className="w-16 h-16 opacity-20" style={{ color: "var(--taza-dark)" }} />
+                <p className="font-body text-center" style={{ color: "var(--taza-dark-light)" }}>
+                  Tu carrito esta vacio
+                </p>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="font-nav px-6 py-3 rounded-lg transition-colors"
+                  style={{ backgroundColor: "var(--taza-brown)", color: "var(--taza-cream)" }}
+                >
+                  Seguir comprando
+                </button>
               </div>
             ) : (
-              <div className="flex flex-col gap-4">
+              <div className="space-y-4">
                 {items.map((item) => {
                   const product = getProduct(item.productId);
                   if (!product) return null;
                   return (
                     <div
                       key={item.productId}
-                      className="flex gap-4 p-3 rounded-lg cursor-pointer transition-colors hover:bg-taza-dark/[0.02] border-b border-taza-border"
-                      onClick={() => setDetailProduct(item.productId)}
+                      className="flex gap-4 p-4 rounded-lg border transition-all hover:shadow-sm"
+                      style={{ borderColor: "var(--taza-border)", backgroundColor: "rgba(255,255,255,0.4)" }}
                     >
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-20 h-20 object-cover rounded"
-                      />
+                      <button
+                        className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 cursor-pointer"
+                        onClick={() => setDetailProduct(item.productId)}
+                      >
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </button>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold text-sm truncate text-taza-dark">{product.name}</h4>
-                        <p className="text-sm mt-1 text-taza-brown">${product.price.toFixed(2)}</p>
-                        <div className="flex items-center gap-3 mt-2">
+                        <h4 className="font-display text-lg truncate" style={{ color: "var(--taza-dark)" }}>
+                          {product.name}
+                        </h4>
+                        <p className="font-body text-sm mt-1" style={{ color: "var(--taza-brown)" }}>
+                          ${product.price.toFixed(2)}
+                        </p>
+                        <div className="flex items-center gap-3 mt-3">
                           <button
-                            onClick={(e) => { e.stopPropagation(); updateQuantity(item.productId, item.quantity - 1); }}
-                            className="w-6 h-6 flex items-center justify-center rounded border transition-colors hover:border-taza-brown border-taza-border"
+                            onClick={() => handleUpdateQuantity(item.productId, item.quantity - 1)}
+                            className="w-8 h-8 rounded-full flex items-center justify-center border transition-colors"
+                            style={{ borderColor: "var(--taza-border)" }}
                           >
-                            -
+                            <Minus className="w-3 h-3" />
                           </button>
-                          <span className="text-sm font-medium">{item.quantity}</span>
+                          <span className="font-body text-sm w-6 text-center">{item.quantity}</span>
                           <button
-                            onClick={(e) => { e.stopPropagation(); updateQuantity(item.productId, item.quantity + 1); }}
-                            className="w-6 h-6 flex items-center justify-center rounded border transition-colors hover:border-taza-brown border-taza-border"
+                            onClick={() => handleUpdateQuantity(item.productId, item.quantity + 1)}
+                            className="w-8 h-8 rounded-full flex items-center justify-center border transition-colors"
+                            style={{ borderColor: "var(--taza-border)" }}
                           >
-                            +
+                            <Plus className="w-3 h-3" />
                           </button>
                           <button
-                            onClick={(e) => { e.stopPropagation(); removeItem(item.productId); }}
-                            className="ml-auto text-xs text-taza-dark/60 hover:text-taza-brown transition-colors"
+                            onClick={() => handleRemove(item.productId)}
+                            className="ml-auto p-2 rounded-full transition-colors hover:bg-red-50"
+                            style={{ color: "var(--taza-error)" }}
                           >
-                            Eliminar
+                            <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
                       </div>
@@ -107,105 +156,85 @@ export default function CartDrawer() {
             )}
           </div>
 
+          {/* Footer */}
           {items.length > 0 && (
-            <div className="p-6 border-t border-taza-border">
-              <div className="flex justify-between items-center mb-4">
-                <span className="font-body text-taza-dark">Subtotal</span>
-                <span className="font-display text-2xl text-taza-dark">
+            <div className="p-6 border-t space-y-4" style={{ borderColor: "var(--taza-border)" }}>
+              <div className="flex justify-between items-center">
+                <span className="font-body" style={{ color: "var(--taza-dark-light)" }}>Subtotal</span>
+                <span className="font-display text-2xl" style={{ color: "var(--taza-dark)" }}>
                   ${totalPrice().toFixed(2)}
                 </span>
               </div>
-              <p className="text-xs text-taza-dark/50 mb-4 font-body">Envío calculado en el siguiente paso</p>
               <button
                 onClick={() => setShowCheckout(true)}
-                className="w-full py-4 text-white font-nav transition-colors hover:opacity-90 bg-taza-brown"
+                className="w-full py-4 rounded-lg font-nav flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02]"
+                style={{ backgroundColor: "var(--taza-brown)", color: "var(--taza-cream)" }}
               >
-                Continuar Compra
-              </button>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="w-full mt-3 py-3 text-sm font-nav text-taza-dark hover:text-taza-brown transition-colors"
-              >
-                Seguir comprando
+                Continuar compra
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
           )}
         </div>
       </div>
 
-      {/* Modal de checkout WhatsApp */}
+      {/* Detail Modal */}
+      {detailProduct && detailProductData && detailItem && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50" onClick={() => setDetailProduct(null)}>
+          <div
+            className="max-w-sm w-full rounded-2xl p-6 relative"
+            style={{ backgroundColor: "var(--taza-cream)" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setDetailProduct(null)}
+              className="absolute top-4 right-4 p-2 rounded-full hover:bg-black/5"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <img
+              src={detailProductData.image}
+              alt={detailProductData.name}
+              className="w-full h-48 object-cover rounded-lg mb-4"
+            />
+            <h3 className="font-display text-2xl" style={{ color: "var(--taza-dark)" }}>
+              {detailProductData.name}
+            </h3>
+            <p className="font-body text-sm mt-2" style={{ color: "var(--taza-dark-light)" }}>
+              {detailProductData.description}
+            </p>
+            <p className="font-display text-xl mt-4" style={{ color: "var(--taza-brown)" }}>
+              ${detailProductData.price.toFixed(2)}
+            </p>
+            <p className="font-caption mt-2" style={{ color: "var(--taza-dark-light)" }}>
+              Cantidad en carrito: {detailItem.quantity}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* WhatsApp Checkout */}
       {showCheckout && (
         <WhatsAppCheckout
-          items={cartItems}
+          items={items.map((i) => {
+            const p = getProduct(i.productId);
+            return {
+              id: i.productId,
+              name: p?.name || "",
+              price: p?.price || 0,
+              quantity: i.quantity,
+            };
+          })}
           total={totalPrice()}
           onClose={() => setShowCheckout(false)}
           onSuccess={() => {
             setShowCheckout(false);
-            setIsOpen(false);
+            clearCart();
+            toast.success("Pedido enviado por WhatsApp", {
+              description: "Gracias por tu compra. Te contactaremos pronto.",
+            });
           }}
         />
-      )}
-
-      {/* Modal de detalle de producto */}
-      {detailProduct && detailProductData && detailItem && (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-taza-dark/90">
-          <div className="relative w-full max-w-4xl rounded-lg overflow-hidden flex flex-col md:flex-row bg-taza-cream" style={{ maxHeight: '90vh' }}>
-            <button
-              onClick={() => setDetailProduct(null)}
-              className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/80 hover:bg-white transition-colors"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-
-            <div className="md:w-1/2">
-              <img
-                src={detailProductData.image}
-                alt={detailProductData.name}
-                className="w-full h-64 md:h-full object-cover"
-              />
-            </div>
-
-            <div className="md:w-1/2 p-8 overflow-y-auto">
-              <h3 className="font-display text-3xl text-taza-dark">{detailProductData.name}</h3>
-              <p className="font-display text-2xl mt-2 text-taza-brown">${detailProductData.price.toFixed(2)}</p>
-              <p className="font-body mt-4 text-taza-dark">{detailProductData.description}</p>
-
-              <div className="mt-6 flex items-center gap-3">
-                <button
-                  onClick={() => updateQuantity(detailProduct, detailItem.quantity - 1)}
-                  className="w-8 h-8 flex items-center justify-center rounded border transition-colors hover:border-taza-brown border-taza-border"
-                >
-                  -
-                </button>
-                <span className="text-lg font-medium">{detailItem.quantity}</span>
-                <button
-                  onClick={() => updateQuantity(detailProduct, detailItem.quantity + 1)}
-                  className="w-8 h-8 flex items-center justify-center rounded border transition-colors hover:border-taza-brown border-taza-border"
-                >
-                  +
-                </button>
-              </div>
-
-              <div className="mt-6 flex gap-3">
-                <button
-                  onClick={() => removeItem(detailProduct)}
-                  className="px-6 py-3 border transition-colors hover:border-taza-brown font-nav text-sm text-taza-dark border-taza-border"
-                >
-                  Eliminar
-                </button>
-                <button
-                  onClick={() => setDetailProduct(null)}
-                  className="px-6 py-3 text-white font-nav text-sm transition-colors hover:opacity-90 bg-taza-brown"
-                >
-                  Seguir Comprando
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
       )}
     </>
   );

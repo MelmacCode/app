@@ -1,100 +1,121 @@
-import { SEO } from '@/hooks/useSEO';
+import { Instagram, Facebook, Youtube, ExternalLink } from "lucide-react";
+import { SEO } from "@/hooks/useSEO";
+import LazyImage from "@/components/LazyImage";
 
-const socialLinks = [
+const socials = [
   {
-    name: 'Instagram',
-    handle: '@latazanomada',
-    url: 'https://www.instagram.com/latazanomada/',
-    followers: '12.5K',
-    description: 'Fotos de nuestras rutas, productores y momentos detras de camaras.',
-    icon: (
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
-        <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" />
-        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
-      </svg>
-    ),
-    color: '#E4405F'
+    name: "Instagram",
+    handle: "@latazanomada",
+    url: "https://instagram.com/latazanomada",
+    icon: Instagram,
+    color: "#E4405F",
+    followers: "12.5K",
+    description: "Fotos diarias de nuestras rutas, productos y detras de camaras.",
+    image: "/images/social-instagram.jpg",
   },
   {
-    name: 'TikTok',
-    handle: '@latazanomada',
-    url: 'https://www.tiktok.com/@latazanomada',
-    followers: '8.2K',
-    description: 'Videos cortos de experiencias, recetas y tips de preparacion.',
-    icon: (
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M9 12a4 4 0 104 4V4a5 5 0 005 5" />
-      </svg>
-    ),
-    color: '#000000'
+    name: "Facebook",
+    handle: "La Taza Nomada",
+    url: "https://facebook.com/latazanomada",
+    icon: Facebook,
+    color: "#1877F2",
+    followers: "8.2K",
+    description: "Eventos, livestreams de catacion y comunidad de amantes del cafe.",
+    image: "/images/social-facebook.jpg",
   },
   {
-    name: 'Facebook',
-    handle: 'La Taza Nomada',
-    url: 'https://www.facebook.com/latazanomada',
-    followers: '5.1K',
-    description: 'Eventos, comunidad y noticias sobre el mundo del cafe venezolano.',
-    icon: (
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
-      </svg>
-    ),
-    color: '#1877F2'
+    name: "TikTok",
+    handle: "@latazanomada",
+    url: "https://tiktok.com/@latazanomada",
+    icon: Youtube,
+    color: "#000000",
+    followers: "24K",
+    description: "Videos cortos de recetas, tips de barismo y humor cafetero.",
+    image: "/images/social-tiktok.jpg",
+  },
+  {
+    name: "YouTube",
+    handle: "La Taza Nomada",
+    url: "https://youtube.com/@latazanomada",
+    icon: Youtube,
+    color: "#FF0000",
+    followers: "3.1K",
+    description: "Documentales de nuestras rutas, tutoriales y entrevistas a productores.",
+    image: "/images/social-youtube.jpg",
   },
 ];
 
 export default function RedesPage() {
   return (
-    <>
+    <div className="pt-32 pb-20" style={{ backgroundColor: "var(--taza-cream)" }}>
       <SEO
-        title="Redes Sociales"
-        description="Conecta con La Taza Nomada en Instagram, TikTok y Facebook. Unete a nuestra comunidad cafetera."
+        title="Redes Sociales | La Taza Nomada"
+        description="Siguenos en Instagram, Facebook, TikTok y YouTube. Contenido diario sobre cafe, cacao y aventuras venezolanas."
         url="/redes"
-        type="website"
+        image="/og-image.jpg"
       />
-      <section className="pt-24 pb-24 md:pb-32 bg-[#F0EAD6]">
-        <div className="max-w-4xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <p className="font-label text-[#63341F] mb-4">Comunidad</p>
-            <h1 className="font-display text-5xl md:text-6xl text-[#38201E] mb-6">
-              Siguenos
-            </h1>
-            <p className="font-body text-lg text-[#38201E]/70 max-w-2xl mx-auto">
-              Unete a nuestra comunidad de amantes del cafe. Comparte tu experiencia y descubre contenido exclusivo.
-            </p>
-          </div>
 
-          <div className="space-y-6">
-            {socialLinks.map((social) => (
-              <a
-                key={social.name}
-                href={social.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-6 p-6 bg-white/50 rounded-xl border border-[rgba(56,32,30,0.08)] hover:border-[#63341F] transition-all group"
-              >
-                <div className="text-[#38201E] group-hover:text-[#63341F] transition-colors">
-                  {social.icon}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-1">
-                    <h3 className="font-display text-xl text-[#38201E]">{social.name}</h3>
-                    <span className="font-caption text-[#63341F]">{social.followers} seguidores</span>
-                  </div>
-                  <p className="font-body text-sm text-[#38201E]/70">{social.description}</p>
-                  <p className="font-caption text-[#63341F] mt-1">{social.handle}</p>
-                </div>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#38201E]/40 group-hover:text-[#63341F] transition-colors">
-                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
-                  <polyline points="15 3 21 3 21 9" />
-                  <line x1="10" y1="14" x2="21" y2="3" />
-                </svg>
-              </a>
-            ))}
-          </div>
+      <div className="content-max-width">
+        <div className="text-center mb-16">
+          <p className="font-label mb-4" style={{ color: "var(--taza-brown)" }}>Comunidad</p>
+          <h1 className="font-display text-5xl md:text-6xl mb-6" style={{ color: "var(--taza-dark)" }}>
+            Siguenos en Redes
+          </h1>
+          <p className="font-body text-lg max-w-2xl mx-auto" style={{ color: "var(--taza-dark-light)" }}>
+            Unete a nuestra comunidad de amantes del cafe y cacao. Contenido fresco todos los dias.
+          </p>
         </div>
-      </section>
-    </>
+
+        <div className="grid md:grid-cols-2 gap-8">
+          {socials.map((social) => (
+            <a
+              key={social.name}
+              href={social.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group rounded-2xl overflow-hidden border transition-all duration-300 hover:shadow-lg"
+              style={{ borderColor: "var(--taza-border)", backgroundColor: "var(--taza-cream)" }}
+            >
+              <div className="relative aspect-[16/9] overflow-hidden">
+                <LazyImage
+                  src={social.image}
+                  alt={social.name}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  containerClassName="w-full h-full"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-6 flex items-end justify-between">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className="w-12 h-12 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: social.color }}
+                    >
+                      <social.icon className="w-6 h-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-display text-xl text-white">{social.name}</h3>
+                      <p className="font-caption text-white/80">{social.handle}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-display text-2xl text-white">{social.followers}</p>
+                    <p className="font-caption text-white/80">seguidores</p>
+                  </div>
+                </div>
+              </div>
+              <div className="p-6">
+                <p className="font-body mb-4" style={{ color: "var(--taza-dark-light)" }}>
+                  {social.description}
+                </p>
+                <div className="flex items-center gap-2 font-nav text-xs" style={{ color: "var(--taza-brown)" }}>
+                  Visitar perfil
+                  <ExternalLink className="w-3 h-3" />
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }

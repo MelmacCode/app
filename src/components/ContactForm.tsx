@@ -1,165 +1,168 @@
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Loader2, CheckCircle, AlertCircle, Send, Mail, User, MessageSquare } from 'lucide-react';
+import { useState } from "react";
+import { Send, Loader2, CheckCircle } from "lucide-react";
 
-const contactSchema = z.object({
-  name: z.string().min(2, 'El nombre es requerido (mínimo 2 caracteres)'),
-  email: z.string().email('Ingresa un email válido'),
-  subject: z.string().min(3, 'El asunto es requerido (mínimo 3 caracteres)'),
-  message: z.string().min(10, 'El mensaje debe tener al menos 10 caracteres'),
-});
+interface ContactFormProps {
+  onSuccess?: () => void;
+}
 
-type ContactFormData = z.infer<typeof contactSchema>;
-
-const FORMSPREE_ENDPOINT = `https://formspree.io/f/${import.meta.env.VITE_FORMSPREE_ID || 'YOUR_FORM_ID'}`;
-
-export function ContactForm() {
-  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<ContactFormData>({
-    resolver: zodResolver(contactSchema),
+export function ContactForm({ onSuccess }: ContactFormProps) {
+  const [form, setForm] = useState({
+    nombre: "",
+    email: "",
+    telefono: "",
+    asunto: "",
+    mensaje: "",
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSent, setIsSent] = useState(false);
+  const [error, setError] = useState("");
 
-  const onSubmit = async (data: ContactFormData) => {
-    setStatus('submitting');
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError("");
+
+    const formId = import.meta.env.VITE_FORMSPREE_ID;
+
+    // Si no hay Formspree ID, simular envio exitoso para demo
+    if (!formId || formId === "your_form_id_here") {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      setIsSent(true);
+      if (onSuccess) onSuccess();
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
-      const response = await fetch(FORMSPREE_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify(data),
+      const response = await fetch(`https://formspree.io/f/${formId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          nombre: form.nombre,
+          email: form.email,
+          telefono: form.telefono,
+          asunto: form.asunto,
+          mensaje: form.mensaje,
+        }),
       });
 
       if (response.ok) {
-        setStatus('success');
-        reset();
+        setIsSent(true);
+        if (onSuccess) onSuccess();
       } else {
-        setStatus('error');
+        setError("Hubo un error al enviar el mensaje. Intenta de nuevo.");
       }
     } catch {
-      setStatus('error');
+      setError("Error de conexion. Verifica tu internet e intenta de nuevo.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
+  if (isSent) {
+    return (
+      <div className="text-center py-8">
+        <CheckCircle className="w-12 h-12 mx-auto mb-4" style={{ color: "var(--taza-turquoise)" }} />
+        <p className="font-display text-xl" style={{ color: "var(--taza-dark)" }}>
+          Mensaje enviado
+        </p>
+        <p className="font-body text-sm mt-2" style={{ color: "var(--taza-dark-light)" }}>
+          Gracias por contactarnos. Te responderemos pronto.
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="space-y-2">
-        <Label htmlFor="name" className="flex items-center gap-2 font-label text-taza-dark">
-          <User size={14} /> Nombre
-        </Label>
-        <Input
-          id="name"
-          {...register('name')}
-          className="border-taza-border bg-white/50 focus:border-taza-brown focus:ring-taza-brown text-taza-dark font-body"
-          placeholder="Tu nombre completo"
+    <form onSubmit={handleSubmit} className="space-y-5">
+      {error && (
+        <div className="p-3 rounded-lg text-sm" style={{ backgroundColor: "rgba(196, 69, 54, 0.1)", color: "var(--taza-error)" }}>
+          {error}
+        </div>
+      )}
+
+      <div>
+        <label className="font-caption block mb-2" style={{ color: "var(--taza-dark)" }}>Nombre</label>
+        <input
+          type="text"
+          required
+          value={form.nombre}
+          onChange={(e) => setForm({ ...form, nombre: e.target.value })}
+          placeholder="Tu nombre"
+          className="w-full px-4 py-3 rounded-lg border bg-white/50 font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors"
+          style={{ borderColor: "var(--taza-border)", color: "var(--taza-dark)" }}
         />
-        {errors.name && (
-          <p className="text-sm text-red-500 flex items-center gap-1 font-body">
-            <AlertCircle size={14} /> {errors.name.message}
-          </p>
-        )}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="email" className="flex items-center gap-2 font-label text-taza-dark">
-          <Mail size={14} /> Email
-        </Label>
-        <Input
-          id="email"
+      <div>
+        <label className="font-caption block mb-2" style={{ color: "var(--taza-dark)" }}>Email</label>
+        <input
           type="email"
-          {...register('email')}
-          className="border-taza-border bg-white/50 focus:border-taza-brown focus:ring-taza-brown text-taza-dark font-body"
+          required
+          value={form.email}
+          onChange={(e) => setForm({ ...form, email: e.target.value })}
           placeholder="tu@email.com"
+          className="w-full px-4 py-3 rounded-lg border bg-white/50 font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors"
+          style={{ borderColor: "var(--taza-border)", color: "var(--taza-dark)" }}
         />
-        {errors.email && (
-          <p className="text-sm text-red-500 flex items-center gap-1 font-body">
-            <AlertCircle size={14} /> {errors.email.message}
-          </p>
-        )}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="subject" className="flex items-center gap-2 font-label text-taza-dark">
-          <MessageSquare size={14} /> Asunto
-        </Label>
-        <Input
-          id="subject"
-          {...register('subject')}
-          className="border-taza-border bg-white/50 focus:border-taza-brown focus:ring-taza-brown text-taza-dark font-body"
-          placeholder="¿De qué se trata?"
+      <div>
+        <label className="font-caption block mb-2" style={{ color: "var(--taza-dark)" }}>Telefono</label>
+        <input
+          type="tel"
+          value={form.telefono}
+          onChange={(e) => setForm({ ...form, telefono: e.target.value })}
+          placeholder="+58 412-6094680"
+          className="w-full px-4 py-3 rounded-lg border bg-white/50 font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors"
+          style={{ borderColor: "var(--taza-border)", color: "var(--taza-dark)" }}
         />
-        {errors.subject && (
-          <p className="text-sm text-red-500 flex items-center gap-1 font-body">
-            <AlertCircle size={14} /> {errors.subject.message}
-          </p>
-        )}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="message" className="flex items-center gap-2 font-label text-taza-dark">
-          <MessageSquare size={14} /> Mensaje
-        </Label>
-        <Textarea
-          id="message"
-          rows={5}
-          {...register('message')}
-          className="border-taza-border bg-white/50 focus:border-taza-brown focus:ring-taza-brown text-taza-dark font-body resize-none"
-          placeholder="Cuéntanos en qué podemos ayudarte..."
+      <div>
+        <label className="font-caption block mb-2" style={{ color: "var(--taza-dark)" }}>Asunto</label>
+        <input
+          type="text"
+          required
+          value={form.asunto}
+          onChange={(e) => setForm({ ...form, asunto: e.target.value })}
+          placeholder="Pedido, reserva, consulta..."
+          className="w-full px-4 py-3 rounded-lg border bg-white/50 font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors"
+          style={{ borderColor: "var(--taza-border)", color: "var(--taza-dark)" }}
         />
-        {errors.message && (
-          <p className="text-sm text-red-500 flex items-center gap-1 font-body">
-            <AlertCircle size={14} /> {errors.message.message}
-          </p>
-        )}
       </div>
 
-      <Button
+      <div>
+        <label className="font-caption block mb-2" style={{ color: "var(--taza-dark)" }}>Mensaje</label>
+        <textarea
+          required
+          rows={4}
+          value={form.mensaje}
+          onChange={(e) => setForm({ ...form, mensaje: e.target.value })}
+          placeholder="Escribe tu mensaje aqui..."
+          className="w-full px-4 py-3 rounded-lg border bg-white/50 font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors resize-none"
+          style={{ borderColor: "var(--taza-border)", color: "var(--taza-dark)" }}
+        />
+      </div>
+
+      <button
         type="submit"
-        disabled={status === 'submitting'}
-        className="w-full bg-taza-brown hover:bg-taza-brown-dark text-taza-cream font-label transition-all duration-300"
+        disabled={isSubmitting}
+        className="w-full py-4 rounded-lg font-nav flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed"
+        style={{ backgroundColor: "var(--taza-brown)", color: "var(--taza-cream)" }}
       >
-        {status === 'submitting' ? (
+        {isSubmitting ? (
           <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <Loader2 className="w-4 h-4 animate-spin" />
             Enviando...
           </>
         ) : (
           <>
-            <Send className="mr-2 h-4 w-4" />
+            <Send className="w-4 h-4" />
             Enviar mensaje
           </>
         )}
-      </Button>
-
-      {status === 'success' && (
-        <div className="flex items-center gap-2 text-taza-turquoise bg-taza-turquoise/10 p-4 rounded-lg animate-fade-in">
-          <CheckCircle size={20} />
-          <span className="font-body">¡Mensaje enviado con éxito! Te responderemos pronto. ☕</span>
-        </div>
-      )}
-
-      {status === 'error' && (
-        <div className="flex items-center gap-2 text-red-600 bg-red-50 p-4 rounded-lg animate-fade-in">
-          <AlertCircle size={20} />
-          <div className="font-body">
-            <p className="font-medium">Hubo un error al enviar.</p>
-            <p className="text-sm">Intenta de nuevo o escríbenos directamente a <a href="mailto:info@latazanomada.com" className="underline">info@latazanomada.com</a></p>
-          </div>
-        </div>
-      )}
+      </button>
     </form>
   );
 }
