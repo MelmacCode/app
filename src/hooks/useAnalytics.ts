@@ -3,16 +3,11 @@ import { useLocation } from "react-router-dom";
 
 /**
  * useAnalytics — Google Analytics 4
- * Inicializa GA4 y trackea automáticamente cada cambio de ruta.
- * Reemplaza el ID de medición con el tuyo cuando lo tengas.
+ * Inicializa GA4 y trackea automaticamente cada cambio de ruta.
  *
- * Para obtener tu GA4 ID:
- * 1. Ve a https://analytics.google.com
- * 2. Crea una propiedad para "La Taza Nómada"
- * 3. Copia el ID de medición (formato: G-XXXXXXXXXX)
- * 4. Reemplaza abajo
+ * ID de medicion: G-9RYL6904XS
  */
-const GA_MEASUREMENT_ID = "G-PLACEHOLDER"; // ← REEMPLAZAR CUANDO TENGAS GA4
+const GA_MEASUREMENT_ID = "G-9RYL6904XS";
 
 declare global {
   interface Window {
@@ -23,7 +18,7 @@ declare global {
 
 export function initGA() {
   if (typeof window === "undefined") return;
-  if (window.gtag) return; // Ya inicializado
+  if (window.gtag) return;
 
   window.dataLayer = window.dataLayer || [];
   window.gtag = function (...args: unknown[]) {
@@ -55,7 +50,7 @@ export function trackEvent(
 }
 
 /**
- * Hook que trackea automáticamente navegación
+ * Hook que trackea automaticamente navegacion
  * Usar en App.tsx
  */
 export function usePageTracking() {
