@@ -61,8 +61,8 @@ export default function Header() {
             <img
               src="/logo.png"
               alt="La Taza Nomada"
-              className="h-16 w-auto object-contain"
-              style={{ maxHeight: "64px", filter: isOverDarkHero ? "brightness(1.1)" : "none" }}
+              className="h-20 w-auto object-contain"
+              style={{ maxHeight: "80px", filter: isOverDarkHero ? "brightness(1.1)" : "none" }}
             />
           </Link>
 
