@@ -69,19 +69,18 @@ export default function WhatsAppCheckout({ items, total, onClose, onSuccess }: W
           <X className="w-5 h-5" style={{ color: "var(--taza-dark)" }} />
         </button>
 
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div
-            className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-            style={{ backgroundColor: "var(--taza-turquoise)" }}
-          >
-            <MessageSquare className="w-8 h-8" style={{ color: "var(--taza-cream)" }} />
-          </div>
+        {/* Header con Logo */}
+        <div className="text-center mb-6">
+          <img
+            src="/logo.png"
+            alt="La Taza Nomada"
+            className="h-20 w-auto mx-auto mb-3 object-contain"
+          />
           <h2 className="font-display text-2xl" style={{ color: "var(--taza-dark)" }}>
             Finalizar por WhatsApp
           </h2>
           <p className="font-body text-sm mt-2" style={{ color: "var(--taza-dark-light)" }}>
-            Te redirigiremos a WhatsApp con tu pedido pre-cargado. Solo envia el mensaje.
+            Te redirigiremos a WhatsApp con tu pedido pre-cargado.
           </p>
         </div>
 
@@ -131,8 +130,8 @@ export default function WhatsAppCheckout({ items, total, onClose, onSuccess }: W
                 type="text"
                 value={customer.name}
                 onChange={(e) => handleInputChange("name", e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border bg-white/50 text-taza-dark font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors"
-                style={{ borderColor: "var(--taza-border)" }}
+                className="w-full px-4 py-3 rounded-lg border bg-white/50 font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors"
+                style={{ borderColor: "var(--taza-border)", color: "var(--taza-dark)" }}
                 placeholder="Ej: Maria Gonzalez"
               />
             </div>
@@ -145,8 +144,8 @@ export default function WhatsAppCheckout({ items, total, onClose, onSuccess }: W
                 type="tel"
                 value={customer.phone}
                 onChange={(e) => handleInputChange("phone", e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border bg-white/50 text-taza-dark font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors"
-                style={{ borderColor: "var(--taza-border)" }}
+                className="w-full px-4 py-3 rounded-lg border bg-white/50 font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors"
+                style={{ borderColor: "var(--taza-border)", color: "var(--taza-dark)" }}
                 placeholder="Ej: 0412-1234567"
               />
             </div>
@@ -159,8 +158,8 @@ export default function WhatsAppCheckout({ items, total, onClose, onSuccess }: W
                 type="text"
                 value={customer.address}
                 onChange={(e) => handleInputChange("address", e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border bg-white/50 text-taza-dark font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors"
-                style={{ borderColor: "var(--taza-border)" }}
+                className="w-full px-4 py-3 rounded-lg border bg-white/50 font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors"
+                style={{ borderColor: "var(--taza-border)", color: "var(--taza-dark)" }}
                 placeholder="Ej: Av. Principal, Edificio XYZ, Piso 2"
               />
             </div>
@@ -172,8 +171,8 @@ export default function WhatsAppCheckout({ items, total, onClose, onSuccess }: W
                 type="text"
                 value={customer.city}
                 onChange={(e) => handleInputChange("city", e.target.value)}
-                className="w-full px-4 py-3 rounded-lg border bg-white/50 text-taza-dark font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors"
-                style={{ borderColor: "var(--taza-border)" }}
+                className="w-full px-4 py-3 rounded-lg border bg-white/50 font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors"
+                style={{ borderColor: "var(--taza-border)", color: "var(--taza-dark)" }}
                 placeholder="Ej: Caracas"
               />
             </div>
@@ -185,8 +184,8 @@ export default function WhatsAppCheckout({ items, total, onClose, onSuccess }: W
                 value={customer.notes}
                 onChange={(e) => handleInputChange("notes", e.target.value)}
                 rows={2}
-                className="w-full px-4 py-3 rounded-lg border bg-white/50 text-taza-dark font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors resize-none"
-                style={{ borderColor: "var(--taza-border)" }}
+                className="w-full px-4 py-3 rounded-lg border bg-white/50 font-body focus:outline-none focus:border-taza-brown focus:ring-1 focus:ring-taza-brown transition-colors resize-none"
+                style={{ borderColor: "var(--taza-border)", color: "var(--taza-dark)" }}
                 placeholder="Ej: Entregar en la manana"
               />
             </div>
